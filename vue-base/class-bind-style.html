@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+<title>Vue.js-Class 与 Style 绑定</title>
+<!-- 开发环境版本，包含了用帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!-- 生产环境版本，优化了尺寸和速度 -->
+<!--<script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+<body>
+
+<div class = 'class1' id = 'vbind-1' v-bind:class="{ class2: isActive, 'class3': addClass3 }">class绑定</div>
+
+<div class= 'class1' id = 'vbind-2' v-bind:class="[activeClass, errorClass]">数组class绑定</div>
+
+<div class = 'class1' id = 'vbind-3' v-bind:class="classObj">对象class绑定</div>
+
+<div id = 'vbind-4' v-bind:style="{ color: activeColor, fontSize: fontSize + 'px' }">绑定内联样式</div>
+
+<div id = 'vbind-5' v-bind:style="styleObj">对象style绑定</div>
+
+<!-- v-bind:style 的数组语法可以将多个样式对象-应用到同一个元素上 -->
+<div v-bind:style="[styleObj1,styleObj2]">数组对象style绑定</div>
+
+</body>
+<script type="text/javascript">
+/* 还可以用对象/计算属性来进行动态绑定 */
+var vm1 = new Vue({
+	el: '#vbind-1',
+	data: {
+		isActive: true,
+		addClass3: true // 渲染为<div id="vbind" class="class1 class2 class3">class绑定</div>，当值改变时会重新渲染
+	}
+})
+
+
+var vm2 = new Vue({
+	el: '#vbind-2',
+	data: {
+		activeClass: 'class2',
+		errorClass: 'class3' // 渲染结果为<div id="vbind-2" class="class1 class2 class3">数组class绑定</div>，当值改变时会重新渲染
+	}
+})
+
+var vm3 = new Vue({
+	el: '#vbind-3',
+	data: {
+		classObj: {
+			class2: true,
+			class3: true // 渲染结果为<div id="vbind-3" class="class1 class2 class3">对象class绑定</div>，当值改变时会重新渲染
+		}
+	}
+})
+
+var vm4 = new Vue({
+	el: '#vbind-4',
+	data: {
+		activeColor: 'green',
+		fontSize: 14 // 渲染结果为<div id="vbind-4" style="color: green; font-size: 14px;">绑定内联样式</div>，当值改变时会重新渲染
+	}
+})
+
+var vm5 = new Vue({
+	el: '#vbind-5',
+	data: {
+		styleObj: {
+			color: 'yellow',
+			fontSize: '15px' // 渲染结果为<div id="vbind-5" style="color: yellow; font-size: 15px;">对象style绑定</div>，当值改变时会重新渲染
+		}
+	}
+})
+</script>
+</html>

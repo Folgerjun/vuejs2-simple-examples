@@ -1,0 +1,171 @@
+<!DOCTYPE HTML>
+<html>
+<title>Vue.js-组件基础</title>
+<!-- 开发环境版本，包含了用帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!-- 生产环境版本，优化了尺寸和速度 -->
+<!--<script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+<body>
+
+<div id="components-demo">
+  <button-counter></button-counter>
+  <blog-post id = "1" title="My journey with Vue"></blog-post>
+  <blog-post id = "2" title="Blogging with Vue"></blog-post>
+  <blog-post id = "3" title="Why Vue is so fun"></blog-post>
+</div>
+
+<!-- 数组循环输出 -->
+<div id="blog-post-demo">
+	<blog-post
+  	 v-for="post in posts"
+  	 v-bind:key="post.id"
+ 	 v-bind:title="post.title"
+ 	 :id="post.id"
+	></blog-post>
+</div>
+
+<!-- 通过事件向父级组件发送消息 -->
+<div id="blog-posts-events-demo">
+  <div :style="{ fontSize: postFontSize + 'em' }">
+    <blog-post-event
+      v-for="post in posts"
+      v-bind:key="post.id"
+      v-bind:post="post"
+      v-on:enlarge-text="postFontSize += 0.1"
+    ></blog-post-event>
+  </div>
+</div>
+
+<!-- 在组件上使用 v-model -->
+<div id="vmodel-component">
+<custom-input v-model="searchText"></custom-input>
+<p>searchText: {{ searchText }}</p>
+</div>
+
+<!-- 通过插槽分发内容 -->
+<div id="alertbox">
+<alert-box>
+  Something bad happened.
+</alert-box>
+</div>
+
+<!-- 动态组件 -->
+<div id="dynamic-component-demo" class="demo">
+  <button
+    v-for="tab in tabs"
+    v-bind:key="tab"
+    v-on:click="currentTab = tab"
+  >{{ tab }}</button>
+
+  <component
+    v-bind:is="currentTabComponent"
+  ></component>
+</div>
+
+</body>
+<script type="text/javascript">
+
+// 定义一个名为 button-counter 的新组件 , 全局注册
+Vue.component('button-counter', {
+  data: function () {
+    return {			// 一个组件的 data 选项必须是一个函数  使得组件能复用 各自维护
+      count: 0
+    }
+  },
+  template: '<button v-on:click="count++">You clicked me {{ count }} times.</button>'
+})
+
+Vue.component('blog-post', {
+  props: ['title','id'],			// 当一个值传递给一个 prop 特性的时候，它就变成了那个组件实例的一个属性
+  template: '<h3>{{ id }} - {{ title }}</h3>'
+})
+
+Vue.component('blog-post-event', {
+  props: ['post'],						// 可以调用内建的 $emit 方法并传入事件的名字，来向父级组件触发一个事件
+  template: `
+    <div class="blog-post">
+      <h3>{{ post.title }}</h3>
+      <button v-on:click="$emit('enlarge-text')"> 
+        Enlarge text
+      </button>
+      <div v-html="post.content"></div>
+    </div>
+  `
+})
+
+Vue.component('custom-input', {
+  props: ['value'],
+  template: `
+    <input
+      v-bind:value="value"
+      v-on:input="$emit('input', $event.target.value)"
+    >
+  `
+})
+
+Vue.component('alert-box', {
+  template: `
+    <div class="demo-alert-box">
+      <strong>Error!</strong>
+      <slot></slot>
+    </div>
+  `
+})
+
+Vue.component('tab-home', { 
+	template: '<div>Home component</div>' 
+})
+Vue.component('tab-posts', { 
+	template: '<div>Posts component</div>' 
+})
+Vue.component('tab-archive', { 
+	template: '<div>Archive component</div>' 
+})
+
+new Vue({
+  el: '#dynamic-component-demo',
+  data: {
+    currentTab: 'Home',
+    tabs: ['Home', 'Posts', 'Archive']
+  },
+  computed: {
+    currentTabComponent: function () {
+      return 'tab-' + this.currentTab.toLowerCase()
+    }
+  }
+})
+
+new Vue({ el: '#components-demo' }) // 创建实例
+new Vue({
+	el: '#blog-post-demo',
+	data: {
+		posts: [
+			{ id: 1, title: 'My journey with Vue' },
+      		{ id: 2, title: 'Blogging with Vue' },
+      		{ id: 3, title: 'Why Vue is so fun' }
+		]
+	}
+})
+
+new Vue({
+  el: '#blog-posts-events-demo',
+  data: {
+    posts: [
+    	{ id: 1, title: 'My journey with Vue', content: 'content1'},
+      	{ id: 2, title: 'Blogging with Vue', content: 'content2'},
+      	{ id: 3, title: 'Why Vue is so fun', content: 'content3'}
+    ],
+    postFontSize: 1
+  }
+})
+
+new Vue({
+	el: '#vmodel-component',
+	data: {
+		searchText: 'this is searchText ...'
+	}
+})
+
+new Vue({ el: '#alertbox' })
+</script>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html>
+<title>Vue.js-条件与循环</title>
+<!-- 开发环境版本，包含了用帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!-- 生产环境版本，优化了尺寸和速度 -->
+<!--<script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+<body>
+
+<div id="app-3">
+  <p v-if="seen">现在你看到我了</p>
+</div>
+
+<div id="app-4">
+  <ol>
+    <li v-for="todo in todos">
+      {{ todo.text }}
+    </li>
+  </ol>
+</div>
+
+</body>
+<script type="text/javascript">
+
+var app3 = new Vue({ // 条件
+  el: '#app-3',
+  data: {
+    seen: true // if 为 true，显示p标签中内容
+  }
+})
+
+var app4 = new Vue({ // 循环
+  el: '#app-4',
+  data: {
+    todos: [	// 内容
+      { text: '学习 JavaScript' },
+      { text: '学习 Vue' },
+      { text: '整个牛项目' }
+    ]
+  }
+})
+
+</script>
+</html>

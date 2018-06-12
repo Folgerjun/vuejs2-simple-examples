@@ -1,0 +1,142 @@
+<!DOCTYPE HTML>
+<html>
+<title>Vue.js-计算属性和侦听器</title>
+<!-- 开发环境版本，包含了用帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!-- 生产环境版本，优化了尺寸和速度 -->
+<!--<script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+<body>
+
+<div id="example">
+  <p>Original message: "{{ message }}"</p>
+  <p>Computed reversed message: "{{ reversedMessage }}"</p>
+  <p>now: "{{ now }}"</p>
+  <p>Reversed message: "{{ reversedMessageM() }}"</p>
+</div>
+
+
+<div id="demo">{{ fullName }}</div>
+
+<div id="watch-example">
+  <p>
+    Ask a yes/no question:
+    <input v-model="question">
+  </p>
+  <p>{{ answer }}</p>
+</div>
+
+
+</body>
+<!-- 因为 AJAX 库和通用工具的生态已经相当丰富，Vue 核心代码没有重复 -->
+<!-- 提供这些功能以保持精简。这也可以让你自由选择自己更熟悉的工具。 -->
+<script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+<script type="text/javascript">
+
+var vm = new Vue({
+  el: '#example',
+  data: {
+    message: 'Hello'
+  },
+  computed: { // 计算属性是基于它们的依赖进行缓存的 只有当message改变时重新加载
+    // 计算属性的 getter
+    reversedMessage: function () {
+      // `this` 指向 vm 实例
+      return this.message.split('').reverse().join('')
+    }
+    ,
+    now: function () {
+      return Date.now()
+  	}
+  }
+  ,
+  methods: { // 声明方法  调用一次加载一次
+  	reversedMessageM: function () {
+  		 return this.message.split('').reverse().join('')
+  	}
+  }
+})
+
+
+// var vm = new Vue({
+//   el: '#demo',
+//   data: {
+//     firstName: 'Foo',
+//     lastName: 'Bar',
+//     fullName: 'Foo Bar'
+//   },
+//   watch: { // 监听
+//     firstName: function (val) {
+//       this.fullName = val + ' ' + this.lastName
+//     },
+//     lastName: function (val) {
+//       this.fullName = this.firstName + ' ' + val
+//     }
+//   }
+// })
+
+/*上面那段代码等同于此段*/
+var vm = new Vue({
+  el: '#demo',
+  data: {
+    firstName: 'Foo',
+    lastName: 'Bar'
+  },
+  computed: {
+    // fullName: function () { // 计算属性默认只有 getter
+    //   return this.firstName + ' ' + this.lastName
+    // }
+    fullName: {
+    	get: function () {
+    		return this.firstName + ' ' + this.lastName
+    	},
+    	set: function (newValue) { // 自定义setter
+    		var names = newValue.split(' ')
+    		this.firstName = names[0]
+    		this.lastName = names[names.length - 1]
+    	}
+  	}}
+})
+
+var watchExampleVM = new Vue({
+  el: '#watch-example',
+  data: {
+    question: '',
+    answer: 'I cannot give you an answer until you ask a question!'
+  },
+  watch: {
+    // 如果 `question` 发生改变，这个函数就会运行
+    question: function (newQuestion, oldQuestion) {
+      this.answer = 'Waiting for you to stop typing...'
+      this.debouncedGetAnswer()
+    }
+  },
+  created: function () {
+    // `_.debounce` 是一个通过 Lodash 限制操作频率的函数。
+    // 在这个例子中，我们希望限制访问 yesno.wtf/api 的频率
+    // AJAX 请求直到用户输入完毕才会发出。想要了解更多关于
+    // `_.debounce` 函数 (及其近亲 `_.throttle`) 的知识，
+    // 请参考：https://lodash.com/docs#debounce
+    this.debouncedGetAnswer = _.debounce(this.getAnswer, 500) // 500ms后执行getAnswer方法
+  },
+  methods: {
+    getAnswer: function () {
+      if (this.question.indexOf('?') === -1) { // '?'不存在
+        this.answer = 'Questions usually contain a question mark. ;-)'
+        return
+      }
+      this.answer = 'Thinking...'
+      var vm = this
+      axios.get('https://yesno.wtf/api') // ajax get方式
+        .then(function (response) {
+          vm.answer = _.capitalize(response.data.answer)
+        })
+        .catch(function (error) {
+          vm.answer = 'Error! Could not reach the API. ' + error
+        })
+    }
+  }
+})
+
+</script>
+</html>

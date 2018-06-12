@@ -1,0 +1,242 @@
+<!DOCTYPE HTML>
+<html>
+<title>Vue.js-列表渲染</title>
+<!-- 开发环境版本，包含了用帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!-- 生产环境版本，优化了尺寸和速度 -->
+<!--<script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+<body>
+
+<ul id="example-1">
+  <li v-for="(item, index) in items" :key="item.id">
+    {{ index }} - {{ item.message }}
+  </li>
+</ul>
+
+
+<ul id="v-for-object">
+  <li v-for="(value, key, index) in object">
+    {{ index }}. {{ key }}: {{ value }}
+  </li>
+</ul>
+
+<ul id="v-for-filter">
+	<li v-for="n in evenNumbers" :key="n.id">{{ n }}</li>
+	<li v-for="n in even(numbers)" :key="n.id">{{ n }}</li>
+</ul>
+
+<div id="v-for-number">
+  <span v-for="n in 10">{{ n }} </span>
+</div>
+
+<div id="todo-list-example">
+  <form v-on:submit.prevent="addNewTodo">
+    <label for="new-todo">Add a todo</label>
+    <input
+      v-model="newTodoText"
+      id="new-todo"
+      placeholder="E.g. Feed the cat"
+    >
+    <button>Add</button>
+  </form>
+  <ul>	<!-- splice(index, howmany) 从下表index开始删除howmany个元素 -->
+    <li
+      is="todo-item"
+      v-for="(todo, index) in todos"
+      v-bind:key="todo.id"
+      v-bind:title="todo.title"
+      v-on:remove="todos.splice(index, 1)"	
+    ></li>
+  </ul>
+</div>
+
+</body>
+<script type="text/javascript">
+
+Vue.component('todo-item', {
+  template: '\
+    <li>\
+      {{ title }}\
+      <button v-on:click="$emit(\'remove\')">Remove</button>\
+    </li>\
+  ',
+  props: ['title']
+})
+
+new Vue({
+  el: '#todo-list-example',
+  data: {
+    newTodoText: '',
+    todos: [
+      {
+        id: 1,
+        title: 'Do the dishes',
+      },
+      {
+        id: 2,
+        title: 'Take out the trash',
+      },
+      {
+        id: 3,
+        title: 'Mow the lawn'
+      }
+    ],
+    nextTodoId: 4
+  },
+  methods: {
+    addNewTodo: function () {
+      this.todos.push({	// 数组里添加元素
+        id: this.nextTodoId++,
+        title: this.newTodoText
+      })
+      this.newTodoText = ''
+    }
+  }
+})
+
+/*************************************************************/
+
+new Vue({
+	el: '#v-for-number'
+})
+
+/*************************************************************/
+
+new Vue({
+	el: '#v-for-filter',
+	data: {
+  		numbers: [ 1, 2, 3, 4, 5 ]
+	},
+	computed: {
+  	evenNumbers: function () {
+    	return this.numbers.filter(function (number) {
+      		return number % 2 === 0
+    	})
+  	}}// 在计算属性不适用的情况下 (例如，在嵌套 v-for 循环中) 你可以使用一个 method 方法
+  	,methods: {
+  		even: function(numbers) {
+  			return numbers.filter(function (number) {
+  				return number % 2 === 0
+  			})
+  		}
+  	}
+})
+
+/*************************************************************/
+
+/*渲染为
+<ul id="v-for-object">
+  <li>
+    0. firstName: John
+  </li>
+  <li>
+    1. lastName: Doe
+  </li>
+  <li>
+    2. age: 30
+  </li>
+</ul>
+ */
+new Vue({
+  el: '#v-for-object',
+  data: {
+    object: {
+      firstName: 'John',
+      lastName: 'Doe',
+      age: 30
+    }
+  }
+})
+
+/*************************************************************/
+
+/*渲染结果为<ul id="example-1">
+      			<li>
+					 0 - Foo
+				</li>
+				<li>
+				     1 - Bar
+				</li>
+			</ul>
+*/
+var example1 = new Vue({
+  el: '#example-1',
+  data: {
+    items: [
+      { message: 'Foo' },
+      { message: 'Bar' }
+    ]
+  }
+})
+
+/*Vue 包含一组观察数组的变异方法，所以它们也将会触发视图更新。这些方法如下：
+push()
+pop()
+shift()
+unshift()
+splice()
+sort()
+reverse()
+你打开控制台，然后用前面例子的 items 数组调用变异方法：example1.items.push({ message: 'Baz' }) 。
+
+变异方法 (mutation method)，顾名思义，会改变被这些方法调用的原始数组。相比之下，也有非变异 (non-mutating method) 方法，例如：filter(), concat() 和 slice() 。这些不会改变原始数组，但总是返回一个新数组。当使用非变异方法时，可以用新数组替换旧数组
+*/
+
+/*************************************************************/
+
+/*数组注意事项*/
+var vm = new Vue({
+  data: {
+    items: ['a', 'b', 'c']
+  }
+})
+vm.items[1] = 'x' // 不是响应性的				
+/*
+应该是：// Vue.set
+Vue.set(vm.items, indexOfItem, newValue)
+或者：
+vm.$set(vm.items, indexOfItem, newValue)
+*/
+
+vm.items.length = 2 // 不是响应性的
+/*
+应该是：vm.items.splice(newLength)
+*/
+
+/*************************************************************/
+
+/*对象更改检测注意事项*/
+var vm = new Vue({
+  data: {
+    a: 1
+  }
+})
+// `vm.a` 现在是响应式的
+
+vm.b = 2
+// `vm.b` 不是响应式的
+
+/*
+对于已经创建的实例，Vue 不能动态添加根级别的响应式属性。
+但是，可以使用 Vue.set(object, key, value) 方法向嵌套对象添加响应式属性下。↓↓
+*/
+
+var vm = new Vue({
+  data: {
+    userProfile: {
+      name: 'Anika'
+    }
+  }
+})
+// 可以添加一个新的 age 属性到嵌套的 userProfile 对象
+Vue.set(vm.userProfile, 'age', 27) 	// or vm.$set(vm.userProfile, 'age', 27)
+
+/*为已有对象赋予多个新属性*/
+vm.userProfile = Object.assign({}, vm.userProfile, {
+  age: 27,
+  favoriteColor: 'Vue Green'
+})
+
+/*************************************************************/
+</script>
+</html>

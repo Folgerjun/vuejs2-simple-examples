@@ -1,0 +1,179 @@
+<!DOCTYPE HTML>
+<html>
+<title>Vue.js-表单输入绑定</title>
+<!-- 开发环境版本，包含了用帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!-- 生产环境版本，优化了尺寸和速度 -->
+<!--<script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+<body>
+
+<!-- 文本框 -->
+<h2>文本框</h2><hr>
+<div id="text">
+	<!-- 单行 -->
+	<h3><li>单行</li></h3>
+	<input v-model="message" placeholder="edit me">
+	<p>Message is: {{ message }}</p>
+	<!-- 多行 -->
+	<h3><li>多行</li></h3>
+	<span>Multiline message is:</span>
+	<p style="white-space: pre-line;">{{ message }}</p>
+	<br>
+	<textarea v-model="message" placeholder="add multiple lines"></textarea>
+</div>
+
+<!-- 复选框 -->
+<h2>复选框</h2><hr>
+<div id="checkbox">
+	<!-- 单个 -->
+	<h3><li>单个</li></h3>
+	<input type="checkbox" id="checkboxS" v-model="checked">
+	<label for="checkboxS">{{ checked }}</label>
+	<!-- 多个 -->
+	<h3><li>多个</li></h3>
+	<input type="checkbox" id="jack" value="Jack" v-model="checkedNames">
+    <label for="jack">Jack</label>
+    <input type="checkbox" id="john" value="John" v-model="checkedNames">
+    <label for="john">John</label>
+    <input type="checkbox" id="mike" value="Mike" v-model="checkedNames">
+    <label for="mike">Mike</label>
+    <br>
+  <span>Checked names: {{ checkedNames }}</span>
+</div>
+
+<!-- 单选按钮 -->
+<h2>单选按钮</h2><hr>
+<div id="example-4">
+  <input type="radio" id="one" value="One" v-model="picked">
+  <label for="one">One</label>
+  <br>
+  <input type="radio" id="two" value="Two" v-model="picked">
+  <label for="two">Two</label>
+  <br>
+  <span>Picked: {{ picked }}</span>
+</div>
+
+<!-- 选择框 -->
+<h2>选择框</h2><hr>
+<!-- 单选 -->
+<h3><li>单选</li></h3>
+<div id="example-5">
+  <select v-model="selected">
+    <option disabled value="">请选择</option>
+    <option>A</option>
+    <option>B</option>
+    <option>C</option>
+  </select>
+  <span>Selected: {{ selected }}</span>
+</div>
+<!-- 多选 -->
+<h3><li>多选</li></h3>
+<div id="example-6">	<!-- 绑定到数组 加上multiple -->
+  <select v-model="selected" multiple style="width: 50px;">
+    <option>A</option>
+    <option>B</option>
+    <option>C</option>
+  </select>
+  <br>
+  <span>Selected: {{ selected }}</span>
+</div>
+<!-- v-for 渲染的动态选项 -->
+<h3><li>v-for 渲染的动态选项</li></h3>
+<div id="example-7">
+  <select v-model="selected">
+    <option v-for="option in options" v-bind:value="option.value">
+     {{ option.text }}
+    </option>
+  </select>
+<span>Selected: {{ selected }}</span>
+</div>
+<hr>
+
+<!-- 值绑定 -->
+<!-- 当选中时，`picked` 为字符串 "a" -->
+<input type="radio" v-model="picked" value="a">
+<!-- `toggle` 为 true 或 false -->
+<input type="checkbox" v-model="toggle">
+<!-- 当选中第一个选项时，`selected` 为字符串 "abc" -->
+<select v-model="selected">
+  <option value="abc">ABC</option>
+</select>
+
+<!-- 复选框 --> <!-- 当选中时 vm.toggle === 'yes'，当没有选中时 vm.toggle === 'no' -->
+<input
+  type="checkbox"
+  v-model="toggle"
+  true-value="yes"
+  false-value="no"
+>
+ 
+<!-- 单选按钮 --> <!-- 当选中时 vm.pick === vm.a -->
+<input type="radio" v-model="pick" v-bind:value="a">
+
+<!-- 选择框 --> <!-- 当选中时 typeof vm.selected // => 'object'，vm.selected.number // => 123 -->
+<select v-model="selected">
+    <!-- 内联对象字面量 -->
+  <option v-bind:value="{ number: 123 }">123</option>
+</select>
+
+<!-- 修饰符 -->
+<!-- .lazy 在默认情况下，v-model 在每次 input 事件触发后将输入框的值与数据进行同步 (除了上述输入法组合文字时)。你可以添加 lazy 修饰符，从而转变为使用 change 事件进行同步 -->
+<!-- 在“change”时而非“input”时更新 -->
+<input v-model.lazy="msg" >
+<!-- .number 如果想自动将用户的输入值转为数值类型，可以给 v-model 添加 number 修饰符 -->
+<input v-model.number="age" type="number">
+<!-- .trim 如果要自动过滤用户输入的首尾空白字符，可以给 v-model 添加 trim 修饰符 -->
+<input v-model.trim="msg">
+
+</body>
+<script type="text/javascript">
+
+new Vue({
+	el: '#text',
+	data: {
+		message: 'This is a message ...'
+	}
+})
+
+var vm = new Vue({
+	el: '#checkbox',
+	data: {
+		checked: false,
+		checkedNames: []
+	}
+})
+
+new Vue({
+  el: '#example-4',
+  data: {
+    picked: ''
+  }
+})
+
+new Vue({
+  el: '#example-5',
+  data: {
+    selected: ''
+  }
+})
+
+new Vue({
+  el: '#example-6',
+  data: {
+    selected: []
+  }
+})
+
+new Vue({
+  el: '#example-7',
+  data: {
+    selected: 'A',
+    options: [
+      { text: 'One', value: 'A' },
+      { text: 'Two', value: 'B' },
+      { text: 'Three', value: 'C' }
+    ]
+  }
+})
+</script>
+</html>
