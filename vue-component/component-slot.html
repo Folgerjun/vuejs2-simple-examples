@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html>
+<title>Vue.js-插槽</title>
+<!-- 开发环境版本，包含了用帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!-- 生产环境版本，优化了尺寸和速度 -->
+<!--<script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+<body>
+
+	<div id = 'slot'>
+	<!-- 组件中内容会替换slot标签 -->
+	<navigation-link url="http://putop.top">
+	  Your Profile
+	</navigation-link>
+
+	<navigation-link url="http://putop.top">
+		<font-awesome fontstyle="font-size:77px">FFFFont</font-awesome>
+		Your Profile
+	</navigation-link>
+
+	<!-- <template> 元素上使用 slot 特性 与 template中 slot name 对应 -->
+	<base-layout>
+	  <template slot="header">
+	    <h1>Here might be a page title</h1>
+	  </template>
+
+	  <p>A paragraph for the main content.</p>
+	  <p>And another one.</p>
+
+	  <template slot="footer">
+	    <p>Here's some contact info</p>
+	  </template>
+	</base-layout>
+
+	</div>
+
+</body>
+
+<!-- template引用 -->
+<!-- <slot> 元素有一个特殊的特性：name。这个特性可以用来定义额外的插槽 -->
+<template id="baselayout">
+	<div class="container">
+  <header>
+    <slot name="header"></slot>
+  </header>
+  <main>
+    <slot></slot>		<!-- 默认插槽 可以指定默认值 -->
+  </main>
+  <footer>
+    <slot name="footer"></slot>
+  </footer>
+</div>
+</template>
+<!-- template引用 -->
+<script type="x-template" id="fontstyle">
+	<p :style="fontstyle"><slot></slot> </p>
+</script>
+
+<script type="text/javascript">
+
+Vue.component('navigation-link', {
+	props: ['url'],
+	template: `
+		<a
+	  	 v-bind:href="url"
+	 	 class="nav-link"
+		>
+	  	<slot></slot>
+		</a>
+		`
+})
+
+Vue.component('font-awesome', {
+	props: {
+		fontstyle: String
+	},
+	template: '#fontstyle'	// 调用id=fontstyle的template模板
+	
+	
+})
+
+Vue.component('base-layout', {
+	template: '#baselayout'
+})
+
+new Vue({el: '#slot'})
+
+</script>
+</html>

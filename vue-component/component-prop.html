@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html>
+<title>Vue.js-Prop</title>
+<!-- 开发环境版本，包含了用帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!-- 生产环境版本，优化了尺寸和速度 -->
+<!--<script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+<body>
+
+	<div id = "prop">	
+		<!-- 在 HTML 中是 kebab-case 的 -->
+		<blog-post post-title="hello!"></blog-post>
+		<!-- prop 通过 v-bind 动态传值 -->
+		<prop-type v-for="post in posts" :key="post.id" :title=post.title :likes="22" :is-published="false" :comment-ids=[1,2,3] :author=post.author></prop-type>
+
+		<my-component prop-c></my-component>
+
+		<person-component :author="getPerson('fujun','fu')"></person-component>
+	</div>
+
+</body>
+<script type="text/javascript">
+
+Vue.component('blog-post', {
+  // 在 JavaScript 中是 camelCase 的
+  props: ['postTitle'],
+  template: '<h3>{{ postTitle }}</h3>'
+})
+
+Vue.component('prop-type',{
+	props: {	// prop 指定类型
+	  title: String,
+	  likes: Number,
+	  isPublished: Boolean,
+	  commentIds: Array,
+	  author: Object
+	},
+	template: `
+		<p>title: {{ title }} , author: {{ author.name }} , age: {{ author.age }}</p>
+	`
+})
+
+/*Prop 验证   当 prop 验证失败的时候，(开发环境构建版本的) Vue 将会产生一个控制台的警告。*/
+Vue.component('my-component', {
+  // inheritAttrs: false,   // 禁止特性继承
+  props: {
+    // 基础的类型检查 (`null` 匹配任何类型)
+    propA: Number,
+    // 多个可能的类型
+    propB: [String, Number],
+    // 必填的字符串
+    propC: {
+      type: String,
+      required: true
+    },
+    // 带有默认值的数字
+    propD: {
+      type: Number,
+      default: 100
+    },
+    // 带有默认值的对象
+    propE: {
+      type: Object,
+      // 对象或数组且一定会从一个工厂函数返回默认值
+      default: function () {
+        return { message: 'hello' }
+      }
+    },
+    // 自定义验证函数
+    propF: {
+      validator: function (value) {
+        // 这个值必须匹配下列字符串中的一个
+        return ['success', 'warning', 'danger'].indexOf(value) !== -1
+      }
+    }
+  },
+  template: '<p>Test ...</p>'
+})
+
+Vue.component('person-component', {
+	props: {
+		author: Person  // 来验证 author prop 的值是否是通过 new Person 创建的。
+	},
+	template: '<p>firstName: {{ author.firstName }} , lastName: {{ author.lastName }}</p>'
+})
+
+function Person (firstName, lastName) {
+  this.firstName = firstName
+  this.lastName = lastName
+}
+
+new Vue({
+	el: '#prop',
+	data: {
+		posts: [
+			{id: 1, title: '学习Vue.js', author: {
+				name: 'ffj',
+				age: 24
+			}},
+			{id: 2, title: 'Vue学习笔记', author: {
+				name: 'fufujun',
+				age: 24
+			}}
+		]
+	},
+	methods: {
+		getPerson: function(firstName,lastName) {
+
+			return new Person(firstName,lastName)
+
+		}
+	}
+})
+
+
+</script>
+</html>

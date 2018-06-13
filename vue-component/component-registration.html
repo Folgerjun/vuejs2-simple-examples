@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<title>Vue.js-组件注册</title>
+<!-- 开发环境版本，包含了用帮助的命令行警告 -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!-- 生产环境版本，优化了尺寸和速度 -->
+<!--<script src="https://cdn.jsdelivr.net/npm/vue"></script> -->
+<body>
+
+	<div id="mycomponent">
+		<my-component-a></my-component-a>
+		<my-component-b></my-component-b>
+		<my-component-c>
+			<my-component-b></my-component-b>
+		</my-component-c>
+	</div>
+
+</body>
+<script type="text/javascript">
+
+/*全局注册 my-component 组件名*/
+Vue.component('my-component-a', {
+	template: '<p>My Component A</p>'
+})
+
+/*局部注册*/
+var MyComponentB = {
+	template: '<p>My Component B</p>'
+}
+
+var MyComponentC = {	//MyComponentB 在 MyComponentC 中可用
+	components: {
+		'my-component-b': MyComponentB
+	},
+	template: '<p>My Component C</p>'
+}
+
+/*创建实例*/
+new Vue({
+	el: '#mycomponent',
+	components: {	// 声明组件
+		'my-component-b': MyComponentB,    // my-component-b 组件名
+		'my-component-c': MyComponentC
+	}
+})
+
+</script>
+</html>
