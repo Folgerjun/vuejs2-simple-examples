@@ -25,3 +25,18 @@ Vue.js(2.x) official website simple examples 官网一些简单示例整理
     +  [动态组件 & 异步组件](vue-component/component-dynamic-asynchronous.html)
     +  [处理边界情况](vue-component/component-handling-boundary-conditions.html)
     +  [插槽](vue-component/component-slot.html)
+
+- 过渡 & 动画
+    + [网格过渡](vue-transition-animation/transition-grid.html)
+    + [列表过渡](vue-transition-animation/transition-list.html)
+    + [状态过渡](vue-transition-animation/transition-state.html)
+    + [动态过渡](vue-transition-animation/transition-dynamic.html)
+    + [单元素/组件的过渡](vue-transition-animation/transition-single.html)
+    + [把过渡放到组件里](vue-transition-animation/transition-component.html)
+    + [赋予设计以生命](vue-transition-animation/transition-life.html)
+
+- 可复用性 & 组合
+    + [混入](vue-reusability-combination/vue-mixins.html)
+    + [过滤器](vue-reusability-combination/vue-filter.html)
+    + [自定义指令](vue-reusability-combination/vue-custom-instructions.html)
+    + [渲染函数 & JSX](vue-reusability-combination/vue-render.html)
